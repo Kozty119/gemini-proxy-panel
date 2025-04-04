@@ -1,498 +1,267 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gemini Proxy Panel</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="style.css"> 
+    <title>Gemini独家KK代理商</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     <style>
-        /* Hide dropdown arrow for datalist inputs */
-        input::-webkit-calendar-picker-indicator {
-            display: none !important;
+        .cyber-decoration {
+            position: fixed;
+            pointer-events: none;
+            z-index: -1;
         }
-        
-        /* Simple loading spinner */
-        .loader {
-            border: 4px solid #f3f3f3; /* Light grey */
-            border-top: 4px solid #3498db; /* Blue */
+
+        .cyber-circle {
+            position: fixed;
+            width: 300px;
+            height: 300px;
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-            display: inline-block; /* Initially hidden */
-            margin-left: 10px;
+            border: 2px solid var(--neon-pink);
+            top: -150px;
+            left: -150px;
+            box-shadow: 0 0 20px var(--neon-pink);
+            opacity: 0.3;
+        }
+
+        .cyber-circle:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            border-color: var(--neon-blue);
+            bottom: -100px;
+            right: -100px;
+            top: auto;
+            left: auto;
+            box-shadow: 0 0 20px var(--neon-blue);
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            max-width: 100px;
+            height: auto;
+            border-radius: 50%;
+            border: 2px solid var(--neon-blue);
+            box-shadow: 0 0 15px var(--neon-blue);
+            vertical-align: middle;
+            margin-right: 20px;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .section-image {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+            border: 1px solid var(--neon-blue);
+            border-radius: 4px;
+            padding: 5px;
+            background: rgba(5, 217, 232, 0.1);
             vertical-align: middle;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        /* Progress ring styles */
-        .progress-ring__circle {
-            transition: stroke-dashoffset 0.35s;
-            transform: rotate(-90deg);
-            transform-origin: 50% 50%;
-        }
-        
-        body[data-theme="dark"] {
-            background-color: #1a202c !important;
-            color: #e2e8f0 !important;
-        }
-        
-        body[data-theme="dark"] .container,
-        body[data-theme="dark"] #main-content {
-            background-color: #1a202c !important;
-        }
-        
-        body[data-theme="dark"] .bg-white,
-        body[data-theme="dark"] section,
-        body[data-theme="dark"] .modal-content,
-        body[data-theme="dark"] .card-item {
-            background-color: #2d3748 !important;
-        }
-        
-        body[data-theme="dark"] .bg-gray-100 {
-            background-color: #1a202c !important;
-        }
-        
-        body[data-theme="dark"] .text-gray-700,
-        body[data-theme="dark"] .text-gray-800,
-        body[data-theme="dark"] .text-gray-900,
-        body[data-theme="dark"] .font-medium,
-        body[data-theme="dark"] h1,
-        body[data-theme="dark"] h2,
-        body[data-theme="dark"] h3 {
-            color: #e2e8f0 !important;
-        }
-        
-        body[data-theme="dark"] .text-gray-500,
-        body[data-theme="dark"] .text-gray-600 {
-            color: #a0aec0 !important;
-        }
-        
-        body[data-theme="dark"] .border,
-        body[data-theme="dark"] input,
-        body[data-theme="dark"] select,
-        body[data-theme="dark"] textarea {
-            border-color: #4a5568 !important;
-        }
-        
-        body[data-theme="dark"] input,
-        body[data-theme="dark"] select,
-        body[data-theme="dark"] textarea {
-            background-color: #2d3748 !important;
-            color: #e2e8f0 !important;
-        }
-        
-        body[data-theme="dark"] .bg-gray-200,
-        body[data-theme="dark"] .bg-gray-300 {
-            background-color: #4a5568 !important;
-        }
-        
-        body[data-theme="dark"] .hover\:bg-gray-300:hover {
-            background-color: #2d3748 !important;
-        }
-        
-        body[data-theme="dark"] .bg-indigo-600 {
-            background-color: #4c51bf !important;
-        }
-        
-        body[data-theme="dark"] .hover\:bg-indigo-700:hover {
-            background-color: #434190 !important;
-        }
-        
-        body[data-theme="dark"] .text-indigo-600 {
-            color: #7f9cf5 !important;
-        }
-        
-        body[data-theme="dark"] .hover\:text-indigo-800:hover {
-            color: #6b46c1 !important;
-        }
-        
-        body[data-theme="dark"] .bg-blue-50,
-        body[data-theme="dark"] .bg-blue-100 {
-            background-color: #2c5282 !important;
-        }
-        
-        body[data-theme="dark"] .text-blue-800 {
-            color: #bee3f8 !important;
-        }
-        
-        body[data-theme="dark"] .text-xs.px-2.py-1.bg-blue-100.text-blue-800.rounded-full {
-            background-color: #3182ce !important; 
-            color: #ffffff !important; 
-        }
-        
-        body[data-theme="dark"] .p-4.border.rounded-md.bg-white {
-            background-color: #2d3748 !important;
-        }
-        
-        body[data-theme="dark"] .text-gray-900 {
-            color: #e2e8f0 !important;
-        }
-        
-        body[data-theme="dark"] .focus\:border-indigo-500:focus,
-        body[data-theme="dark"] .focus\:ring-indigo-500:focus {
-            border-color: #7f9cf5 !important;
-            box-shadow: 0 0 0 1px #7f9cf5 !important;
-        }
-        
-        body[data-theme="dark"] .toggle-label {
-            background-color: #4a5568 !important;
-        }
-        
-        body[data-theme="dark"] .toggle-checkbox:checked + .toggle-label {
-            background-color: #68D391 !important;
-        }
-        
-        body[data-theme="dark"] .toggle-checkbox {
-            border-color: #4a5568 !important;
-        }
-        
-        body[data-theme="dark"] .toggle-checkbox:checked {
-            border-color: #68D391 !important;
-        }
-        
-        body[data-theme="dark"] label[for^="safety-toggle"] {
-            color: #e2e8f0 !important;
-        }
-        
-        body[data-theme="dark"] .text-green-600 {
-            color: #68D391 !important;
-        }
-        
-        body[data-theme="dark"] .text-red-600 {
-            color: #F56565 !important;
-        }
-        
-        .toggle-label + span {
-            margin-left: 8px !important;
-        }
-        
-        /* Custom dropdown dark mode styles */
-        body[data-theme="dark"] #custom-model-dropdown {
-            background-color: #2d3748 !important;
-            border-color: #4a5568 !important;
-        }
-        
-        body[data-theme="dark"] #custom-model-dropdown div {
-            color: #e2e8f0 !important;
-        }
-        
-        body[data-theme="dark"] #custom-model-dropdown div:hover {
-            background-color: #4a5568 !important;
-        }
 
-        /* Dark mode button adjustments for Managed Models */
-        body[data-theme="dark"] .set-individual-quota {
-            color: #90cdf4 !important; /* Lighter blue */
-        }
-        body[data-theme="dark"] .set-individual-quota:hover {
-            color: #bee3f8 !important; /* Even lighter blue on hover */
-        }
-        body[data-theme="dark"] .delete-model {
-            color: #fbb6ce !important; /* Lighter red/pink */
-        }
-        body[data-theme="dark"] .delete-model:hover {
-            color: #fecaca !important; /* Even lighter red/pink on hover */
-        }
-
-        /* Dark mode adjustments for text-based delete buttons */
-        body[data-theme="dark"] .delete-worker-key,
-        body[data-theme="dark"] .delete-gemini-key { /* .delete-model already covered above */
-            color: #fbb6ce !important; /* Lighter red/pink */
-        }
-        body[data-theme="dark"] .delete-worker-key:hover,
-        body[data-theme="dark"] .delete-gemini-key:hover { /* .delete-model already covered above */
-            color: #fecaca !important; /* Even lighter red/pink on hover */
-        }
-
-        /* Dark mode adjustments for text-based action buttons */
-        body[data-theme="dark"] .test-gemini-key { /* .set-individual-quota already covered above */
-             color: #90cdf4 !important; /* Lighter blue */
-        }
-        body[data-theme="dark"] .test-gemini-key:hover { /* .set-individual-quota already covered above */
-             color: #bee3f8 !important; /* Even lighter blue on hover */
-        }
-
-        /* Adjust Generate Worker Key button (text-based) */
-        body[data-theme="dark"] #generate-worker-key {
-            color: #a3bffa !important; /* Lighter indigo */
-        }
-        body[data-theme="dark"] #generate-worker-key:hover {
-            color: #c3dafe !important; /* Even lighter indigo */
-        }
-
-        /* Adjust Set Category Quotas button (background) */
-        body[data-theme="dark"] #set-category-quotas-btn {
-            background-color: #4299e1 !important; /* Brighter blue */
-            color: #ffffff !important;
-        }
-        body[data-theme="dark"] #set-category-quotas-btn:hover {
-            background-color: #63b3ed !important; /* Lighter blue on hover */
-        }
-
-        /* Adjust Run Test button (background) */
-        body[data-theme="dark"] .run-test-btn {
-            background-color: #48bb78 !important; /* Brighter green */
-            color: #ffffff !important;
-        }
-        body[data-theme="dark"] .run-test-btn:hover {
-            background-color: #68d391 !important; /* Lighter green on hover */
-        }
-
-        /* Adjust Modal Cancel buttons (background) */
-        body[data-theme="dark"] #cancel-category-quotas,
-        body[data-theme="dark"] #cancel-individual-quota {
-            background-color: #4a5568 !important; /* Darker gray background */
-            color: #e2e8f0 !important; /* Light text */
-            border-color: #718096 !important; /* Gray border */
-        }
-        body[data-theme="dark"] #cancel-category-quotas:hover,
-        body[data-theme="dark"] #cancel-individual-quota:hover {
-            background-color: #718096 !important; /* Lighter gray background on hover */
-        }
-
-        /* Dark mode adjustments for Ignore Error button */
-        body[data-theme="dark"] .clear-gemini-key-error {
-            color: #faf089 !important; /* Lighter yellow (Tailwind yellow-300) */
-        }
-        body[data-theme="dark"] .clear-gemini-key-error:hover {
-            color: #f6e05e !important; 
+        .bg-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('bg.jpg');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.1;
+            z-index: -2;
+            pointer-events: none;
         }
     </style>
-    <script>
-        (function() {
-            try {
-                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-
-                if (!isLoggedIn) {
-                    window.location.href = '/login';
-                }
-            } catch (e) {
-                console.error('Auth check error:', e);
-                window.location.href = '/login';
-            }
-        })();
-    </script>
 </head>
-<body class="bg-gray-100 font-sans leading-normal tracking-normal" data-theme="light">
-    <!-- Authentication Checking UI -->
-    <div id="auth-checking" class="fixed inset-0 bg-gray-700 bg-opacity-75 flex items-center justify-center z-50">
-        <div class="bg-white p-8 rounded-lg shadow-xl text-center">
-            <div class="loader mx-auto mb-4"></div>
-            <p class="text-lg text-gray-700">Verifying identity...</p>
-            <p class="text-sm text-gray-500 mt-2">If the page does not respond for a long time, please <a href="/login" class="text-blue-600 hover:underline">return to the login page</a></p>
-        </div>
-    </div>
-    <!-- Unauthorized UI -->
-    <div id="unauthorized" class="fixed inset-0 bg-gray-700 bg-opacity-75 flex items-center justify-center z-50 hidden">
-        <div class="bg-white p-8 rounded-lg shadow-xl text-center max-w-md">
-            <div class="text-red-500 mb-4">
-                <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                </svg>
+<body>
+    <!-- 背景和装饰元素 -->
+    <div class="bg-image"></div>
+    <div class="cyber-decoration cyber-circle"></div>
+    <div class="cyber-decoration cyber-circle"></div>
+
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <img class="logo" src="your_logo.png" alt="Gemini Logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%230d0221%22 stroke=%22%2305d9e8%22 stroke-width=%222%22/><text x=%2250%%22 y=%2250%%22 font-family=%22Arial%22 font-size=%2220%22 fill=%22%23ff2a6d%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22>G</text></svg>'">
+                <h1 class="glow-text">Gemini独家KK代理商</h1>
             </div>
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Unauthorized Access</h2>
-            <p class="text-gray-600 mb-6">You need to log in to access the admin page</p>
-            <a href="/login" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline inline-block">
-                Go to Login
-            </a>
-        </div>
-    </div>
-    <div id="main-content" class="hidden">
-        <div class="container mx-auto p-4 lg:p-8">
-            <div class="flex justify-between items-center mb-6">
-                <h1 class="text-2xl lg:text-3xl font-bold text-gray-800">Gemini Proxy Panel</h1>
-                <div class="flex items-center space-x-2">
-                    <button id="dark-mode-toggle" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium p-2 rounded flex items-center justify-center h-[38px] w-[38px]">
-                        <svg id="sun-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                        </svg>
-                        <svg id="moon-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-                        </svg>
-                    </button>
-                    <button id="logout-button" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded">
-                        Logout
-                    </button>
+            <div class="cyber-line"></div>
+        </header>
+
+        <main>
+            <section class="card">
+                <div class="section-header">
+                    <h2>
+                        <img class="section-image" src="api_key.png" alt="API" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22 viewBox=%220 0 40 40%22><rect width=%2240%22 height=%2240%22 fill=%22%230d0221%22 /><path d=%22M10,20 L30,20 M20,10 L20,30%22 stroke=%22%23ff2a6d%22 stroke-width=%222%22 /><circle cx=%2220%22 cy=%2220%22 r=%225%22 stroke=%22%2305d9e8%22 fill=%22transparent%22 stroke-width=%222%22 /></svg>'">
+                        Gemini API Keys
+                    </h2>
                 </div>
-            </div>
-            <!-- Loading Indicator -->
-            <div id="loading-indicator" class="fixed top-4 right-4 bg-blue-500 text-white p-2 rounded shadow hidden">
-                <div class="loader"></div> Loading...
-            </div>
-            <!-- Error Message Area -->
-            <div id="error-message" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 hidden" role="alert">
-                <strong class="font-bold">Error:</strong>
-                <span class="block sm:inline" id="error-text"></span>
-            </div>
-            <!-- Success Message Area -->
-            <div id="success-message" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4 hidden" role="alert">
-                <strong class="font-bold">Success:</strong>
-                <span class="block sm:inline" id="success-text"></span>
-            </div>
-        <!-- Gemini API Keys Section -->
-        <section class="mb-8 bg-white p-6 rounded-lg shadow">
-            <h2 class="text-xl font-semibold mb-4 text-gray-700">Gemini API Keys</h2>
-            <div id="gemini-keys-list" class="mb-4 space-y-4">
-                <!-- Key items will be loaded here -->
-                <p class="text-gray-500">Loading keys...</p>
-            </div>
-            <form id="add-gemini-key-form" class="space-y-3">
-                <h3 class="text-lg font-medium">Add New Gemini Key</h3>
-                <div>
-                    <label for="gemini-key-name" class="block text-sm font-medium text-gray-700">Name (Optional)</label>
-                    <input type="text" id="gemini-key-name" name="name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="e.g., Personal Key">
-                    <p class="text-xs text-gray-500 mt-1">A friendly name for identification. If not provided, an auto-generated ID will be used.</p>
-                </div>
-                <div>
-                    <label for="gemini-key-value" class="block text-sm font-medium text-gray-700">API Key Value</label>
-                    <input type="text" id="gemini-key-value" name="key" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Enter Gemini API Key">
-                </div>
-                <!-- Removed Daily Quota input for Gemini Key -->
-                <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Add Gemini Key
-                </button>
-            </form>
-        </section>
-        <!-- Worker API Keys Section -->
-        <section class="mb-8 bg-white p-6 rounded-lg shadow">
-            <h2 class="text-xl font-semibold mb-4 text-gray-700">Worker API Keys</h2>
-             <div id="worker-keys-list" class="mb-4 space-y-2">
-                <!-- Key items will be loaded here -->
-                 <p class="text-gray-500">Loading keys...</p>
-            </div>
-            <!-- Worker Keys Legend/Help -->
-            <div class="bg-blue-50 p-3 rounded mb-4 text-sm text-blue-800">
-                <p><strong>Safety Settings:</strong> Enabled by default. When disabled, safety settings will be added to requests to allow content generation without content safety restrictions.</p>
-            </div>
-            <form id="add-worker-key-form" class="space-y-3">
-                 <h3 class="text-lg font-medium">Add New Worker Key</h3>
-                <div>
-                    <label for="worker-key-value" class="block text-sm font-medium text-gray-700">API Key Value</label>
-                    <input type="text" id="worker-key-value" name="key" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Generate or enter a strong key">
-                     <button type="button" id="generate-worker-key" class="mt-1 text-sm text-indigo-600 hover:text-indigo-800">Generate Random Key</button>
-                </div>
-                 <div>
-                    <label for="worker-key-desc" class="block text-sm font-medium text-gray-700">Description (Optional)</label>
-                    <input type="text" id="worker-key-desc" name="description" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="e.g., Client App A">
-                </div>
-                <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Add Worker Key
-                </button>
-            </form>
-        </section>
-        <!-- Models Section -->
-        <section class="bg-white p-6 rounded-lg shadow">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-semibold text-gray-700">Managed Models</h2>
-                <button id="set-category-quotas-btn" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                    Set Category Quotas
-                </button>
-            </div>
-             <div id="models-list" class="mb-4 space-y-2">
-                <!-- Model items will be loaded here -->
-                 <p class="text-gray-500">Loading models...</p>
-            </div>
-            <form id="add-model-form" class="space-y-3">
-                 <h3 class="text-lg font-medium">Add Model</h3>
-                <div>
-                    <label for="model-id" class="block text-sm font-medium text-gray-700">Model ID</label>
-                    <div class="relative">
-                        <input type="text" id="model-id" name="id" required list="model-suggestions" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="e.g., gemini-1.5-flash-latest" autocomplete="off">
-                        <datalist id="model-suggestions">
-                        </datalist>
+                <div class="cyber-form">
+                    <div class="form-group">
+                        <label>名称（可选）</label>
+                        <input type="text" class="cyber-input" placeholder="例如：个人密钥">
+                        <small>用于识别的友好名称。如果不提供，将使用自动生成的ID。</small>
                     </div>
-                    <p class="text-xs text-gray-500 mt-1">Select or enter model ID</p>
+                    <div class="form-group">
+                        <label>API 密钥</label>
+                        <input type="text" class="cyber-input" placeholder="输入 Gemini API 密钥">
+                    </div>
+                    <button class="cyber-button">添加 Gemini 密钥</button>
                 </div>
-                 <div>
-                    <label for="model-category" class="block text-sm font-medium text-gray-700">Category</label>
-                    <select id="model-category" name="category" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                        <option value="Pro">Pro</option>
-                        <option value="Flash">Flash</option>
-                        <option value="Custom">Custom</option>
-                    </select>
-                </div>
-                <div id="custom-quota-div" class="hidden"> <!-- Hidden by default -->
-                    <label for="model-quota" class="block text-sm font-medium text-gray-700">Daily Quota (Custom)</label>
-                    <input type="text" id="model-quota" name="dailyQuota" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="e.g., 1500, or 'none'/'0' for unlimited">
-                    <p class="text-xs text-gray-500 mt-1">Only for 'Custom' category. Sets max daily requests for this specific model. Enter 'none' or '0' for unlimited.</p>
-                </div>
-                <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Add Model
-                </button>
-            </form>
-        </section>
-    </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>名称/ID</th>
+                            <th>密钥</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>个人密钥</td>
+                            <td>sk-****1234</td>
+                            <td><span class="status-badge status-active">活跃</span></td>
+                            <td>
+                                <button class="cyber-button small">删除</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
 
-    <!-- Set Category Quotas Modal -->
-    <div id="category-quotas-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden">
-        <div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4 modal-content">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-bold text-gray-800">Set Category Quotas</h2>
-                <button id="close-category-quotas-modal" class="text-gray-500 hover:text-gray-800">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-            </div>
-            <form id="category-quotas-form" class="space-y-4">
-                <div>
-                    <label for="pro-quota" class="block text-sm font-medium text-gray-700">Pro Models Daily Quota</label>
-                    <input type="number" id="pro-quota" name="proQuota" required min="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Default: 50">
-                    <p class="text-xs text-gray-500 mt-1">Total daily requests shared by all 'Pro' models across all keys.</p>
+            <section class="card">
+                <div class="section-header">
+                    <h2>
+                        <img class="section-image" src="worker_key.png" alt="Worker" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22 viewBox=%220 0 40 40%22><rect width=%2240%22 height=%2240%22 fill=%22%230d0221%22 /><path d=%22M10,15 L30,15 M10,25 L30,25%22 stroke=%22%2305d9e8%22 stroke-width=%222%22 /><circle cx=%2215%22 cy=%2220%22 r=%225%22 stroke=%22%23ff2a6d%22 fill=%22transparent%22 stroke-width=%222%22 /></svg>'">
+                        Worker API Keys
+                    </h2>
                 </div>
-                <div>
-                    <label for="flash-quota" class="block text-sm font-medium text-gray-700">Flash Models Daily Quota</label>
-                    <input type="number" id="flash-quota" name="flashQuota" required min="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Default: 1500">
-                    <p class="text-xs text-gray-500 mt-1">Total daily requests shared by all 'Flash' models across all keys.</p>
+                <div class="safety-info">
+                    <div class="info-box">
+                        <h3>安全设置说明</h3>
+                        <p>默认启用。禁用时，将添加安全设置以允许在没有内容安全限制的情况下生成内容。</p>
+                    </div>
                 </div>
-                <div class="flex justify-end space-x-2">
-                    <button type="button" id="cancel-category-quotas" class="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Cancel
-                    </button>
-                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Save Quotas
-                    </button>
-                </div>
-            </form>
-            <div id="category-quotas-error" class="text-red-500 text-sm mt-2 hidden"></div>
-        </div>
-    </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>密钥</th>
+                            <th>描述</th>
+                            <th>创建时间</th>
+                            <th>安全设置</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>wk-****5678</td>
+                            <td>测试应用</td>
+                            <td>2024/4/3</td>
+                            <td>
+                                <div class="safety-toggle">
+                                    <input type="checkbox" id="safety-1" checked>
+                                    <label for="safety-1"></label>
+                                </div>
+                            </td>
+                            <td>
+                                <button class="cyber-button small danger">删除</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
 
-    <!-- Individual Quota Modal -->
-    <div id="individual-quota-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden">
-        <div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4 modal-content">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-bold text-gray-800">Set Quota</h2>
-                <button id="close-individual-quota-modal" class="text-gray-500 hover:text-gray-800">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-            </div>
-            <form id="individual-quota-form" class="space-y-4">
-                <input type="hidden" id="individual-quota-model-id" name="modelId" value="">
-                <div>
-                    <label for="individual-quota-value" class="block text-sm font-medium text-gray-700">Individual Daily Quota</label>
-                    <input type="number" id="individual-quota-value" name="individualQuota" min="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Default: 0 (No individual quota)">
-                    <p class="text-xs text-gray-500 mt-1">Enter 0 for no individual quota. Individual quota is applied in addition to category quota.</p>
+            <section class="card">
+                <div class="section-header">
+                    <h2>
+                        <img class="section-image" src="add_key.png" alt="Add Key" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22 viewBox=%220 0 40 40%22><rect width=%2240%22 height=%2240%22 fill=%22%230d0221%22 /><path d=%22M20,10 L20,30 M10,20 L30,20%22 stroke=%22%23d300c5%22 stroke-width=%222%22 /><circle cx=%2220%22 cy=%2220%22 r=%2210%22 stroke=%22%2305d9e8%22 fill=%22transparent%22 stroke-width=%221%22 /></svg>'">
+                        Add New Worker Key
+                    </h2>
                 </div>
-                <!-- Removed the note/priority/applicable section -->
-                <div class="flex justify-end space-x-2">
-                    <button type="button" id="cancel-individual-quota" class="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Cancel
-                    </button>
-                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Save Quota
-                    </button>
+                <div class="cyber-form">
+                    <div class="form-group">
+                        <label>API 密钥</label>
+                        <input type="text" class="cyber-input" placeholder="生成或输入强密钥">
+                        <button class="cyber-button small" id="generate-key">生成随机密钥</button>
+                    </div>
+                    <div class="form-group">
+                        <label>描述（可选）</label>
+                        <input type="text" class="cyber-input" placeholder="例如：客户端应用 A">
+                    </div>
+                    <div class="safety-toggle">
+                        <input type="checkbox" id="new-key-safety" checked>
+                        <label for="new-key-safety"></label>
+                        <span>安全设置</span>
+                    </div>
+                    <button class="cyber-button">添加 Worker 密钥</button>
                 </div>
-            </form>
-            <div id="individual-quota-error" class="text-red-500 text-sm mt-2 hidden"></div>
-        </div>
+            </section>
+
+            <section class="card">
+                <div class="section-header">
+                    <h2>
+                        <img class="section-image" src="models.png" alt="Models" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22 viewBox=%220 0 40 40%22><rect width=%2240%22 height=%2240%22 fill=%22%230d0221%22 /><path d=%22M15,10 L15,30 M25,10 L25,30%22 stroke=%22%23ff2a6d%22 stroke-width=%222%22 /><circle cx=%2220%22 cy=%2215%22 r=%225%22 stroke=%22%2305d9e8%22 fill=%22transparent%22 stroke-width=%222%22 /><circle cx=%2220%22 cy=%2225%22 r=%225%22 stroke=%22%23d300c5%22 fill=%22transparent%22 stroke-width=%222%22 /></svg>'">
+                        Managed Models
+                    </h2>
+                    <button class="cyber-button" id="set-category-quotas">设置类别配额</button>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>模型 ID</th>
+                            <th>类别</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>gemini-2.5-pro-exp-03-25</td>
+                            <td><span class="model-category pro">Pro</span></td>
+                            <td>
+                                <button class="cyber-button small">设置配额</button>
+                                <button class="cyber-button small danger">删除</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>gemini-2.0-flash</td>
+                            <td><span class="model-category flash">Flash</span></td>
+                            <td>
+                                <button class="cyber-button small">设置配额</button>
+                                <button class="cyber-button small danger">删除</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="cyber-form model-form">
+                    <h3>添加模型</h3>
+                    <div class="form-group">
+                        <label>模型 ID</label>
+                        <input type="text" class="cyber-input" placeholder="例如：gemini-1.5-flash-latest">
+                        <small>选择或输入模型 ID</small>
+                    </div>
+                    <div class="form-group">
+                        <label>类别</label>
+                        <select class="cyber-select">
+                            <option value="Pro">Pro</option>
+                            <option value="Flash">Flash</option>
+                            <option value="Custom">Custom</option>
+                        </select>
+                    </div>
+                    <button class="cyber-button">添加模型</button>
+                </div>
+            </section>
+        </main>
     </div>
 
     <script src="script.js"></script>
